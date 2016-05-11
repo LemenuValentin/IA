@@ -14,5 +14,28 @@ def ChooseAssassins(state):
             Assassins.append(who)
     return Assassins
 
-#def MoveVillagers(state):
-    #PAvillagers = state['CARDS'][
+def coord(name,state):
+    for y in range(10):
+        for x in range(10):
+            if state['people'][y][x] == str(name):
+                return y,x
+
+def OnRoof(x,y,Newx,Newy,state):
+    if state['board'][x][y] == 'G' and state['board'][Newx][Newy] == 'R':
+        return True
+    
+
+def nextposfree(x,y,direction,state):
+    if direction == 'N':
+        if x != 0:
+            x = x-1
+    if direction == 'S':
+        if x != 9:
+            x = x+1
+    if direction == 'E':
+        if y != 9:
+            y = y+1
+    if direction == 'W':
+        if y != 0:
+            y = y-1
+    return x,y

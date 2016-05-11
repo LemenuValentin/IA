@@ -313,12 +313,41 @@ class KingAndAssassinsClient(game.GameClient):
         else:
             #player 0 : on est l'assassin
             if self._playernb == 0:
+                print(state['board'])
+                print(state['people'])
+                for y in range(10):
+                    for x in range(10):
+                        if state['people'][y][x] == 'farmer':
+                            print(y,x)
+                PAvillagers = state['card'][3]
+                PAknight = state['card'][1]
+                PAking = state['card'][0]
+                print(PAvillagers,PAknight,PAking)
                 Villagers = []
                 for i in range(10):
                     for j in range(10):
                         if state['people'][i][j] not in {'knight','king',None}:
                             Villagers.append(state['people'][i][j])
-                return json.dumps({'actions': []}, separators=(',', ':'))
+                move = []
+                while len(move) < PAvillagers:
+                    directions = ['N','S','W','E']
+                    name = random.choice(Villagers)
+                    print(name)
+                    direct = random.choice(directions)
+                    coordonnees = IA.coord(name,state)
+                    z = IA.nextposfree(coordonnees[0],coordonnees[1],direct,state)
+                    Newx = z[0]
+                    Newy = z[1]
+                    print(coordonnees[1],coordonnees[0])
+                    print(Newx,Newy)
+                    if state['people'][Newx][Newy] == None :
+                        move.append(('move',coordonnees[0],coordonnees[1],direct))
+                        state['people'][coordonnees[0]][coordonnees[1]] = None
+                        state['people'][Newx][Newy]= name
+                        if IA.OnRoof(coordonnees[1],coordonnees[0],Newx,Newy,state) is True:
+                            PAvillagers-=1
+                    print(move)
+                return json.dumps({'actions': move }, separators=(',', ':'))
             #player 1 : on est le roi
             else:
                 return json.dumps({'actions': []}, separators=(',', ':'))
