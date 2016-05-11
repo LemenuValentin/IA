@@ -1,0 +1,2 @@
+Le fichier Kingandassassins.py et IA.py reprend juste les déplacements des joueurs.
+Le fichier Kingandassassinstest.py et IAtest.py permettent en plus d'attaquer le roi.
