@@ -1,2 +1,13 @@
-Le fichier Kingandassassins.py et IA.py reprend juste les déplacements des joueurs.
-Le fichier Kingandassassinstest.py et IAtest.py permettent en plus d'attaquer le roi.
+Le fichier Kingandassassins.py et IA.py reprend juste les déplacements des citoyens et assassins.
+Celui-ci est fonctionnel.
+Le fichier Kingandassassinstest.py et IAtest.py est une avancé vers la version final mais non fonctionnelle.
+Il permet aux assassins de tuer le roi si il est à porté. 
+On y retrouve également un premier système de déplacement des villageois et du roi.
+
+Utilisation :
+Créer un dossier reprenant tous les fichiers présent ici. Placer simplement le fichier game.py dans un dossier nommé "lib"
+Lancer 3 invites de commandes :
+-python kingandassassinstest.py server --verbose
+-python kingandassassinstest.py client "nom du joueur1"
+-python kingandassassinstest.py client "non du joueur2"
+

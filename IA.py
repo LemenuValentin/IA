@@ -1,6 +1,7 @@
 #librairie IA
 import random
 
+#prend 3 assassins aléatoirement
 def ChooseAssassins(state):
     Villagers = []
     for i in range(10):
@@ -14,17 +15,19 @@ def ChooseAssassins(state):
             Assassins.append(who)
     return Assassins
 
+#retrouve les coordonnées d'un citoyen
 def coord(name,state):
     for y in range(10):
         for x in range(10):
             if state['people'][y][x] == str(name):
                 return y,x
-
+            
+#regarde si on est sur un toit ou non
 def OnRoof(x,y,Newx,Newy,state):
     if state['board'][x][y] == 'G' and state['board'][Newx][Newy] == 'R':
         return True
     
-
+#donne les coordonnées de la position après déplacement
 def nextposfree(x,y,direction,state):
     if direction == 'N':
         if x != 0:

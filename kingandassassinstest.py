@@ -325,20 +325,44 @@ class KingAndAssassinsClient(game.GameClient):
                 if Killer is not None:
                     Killermove = []
                     if Killer[3] == 3:
-                        Killermove.append(('reveal',Killer[0],Killer[1]))
-                        Killermove.append(('move',Killer[0],Killer[1],Killer[2]))
-                        Killermove.append(('move',Killer[0]+1,Killer[1]+1,Killer[2]))
-                        Killermove.append(('attack',Killer[0]+2,Killer[1]+2,Killer[2]))
-                        return json.dumps({'actions': Killermove }, separators=(',', ':'))
+                        print(Killer)
+                        NewCoorda = IAtest.nextposfree(Killer[0],Killer[1],Killer[2],state)
+                        if state['people'][NewCoorda[0]][NewCoorda[1]] == None:
+                            Killermove.append(('reveal',Killer[0],Killer[1]))
+                            Killermove.append(('move',Killer[0],Killer[1],Killer[2]))
+                            state['people'][Killer[0]][Killer[1]] = None
+                            state['people'][NewCoorda[0]][NewCoorda[1]]= Killer[3]
+                        NewCoorda2 = IAtest.nextposfree(NewCoorda[0],NewCoorda[1],Killer[2],state)
+                        if state['people'][NewCoorda2[0]][NewCoorda2[1]] == None:
+                            Killermove.append(('move',NewCoorda[0],NewCoorda[1],Killer[2]))
+                            state['people'][NewCoorda[0]][NewCoorda[1]] = None
+                            state['people'][NewCoorda2[0]][NewCoorda2[1]]= Killer[3]
+                        NewCoorda3 = IAtest.nextposfree(NewCoorda2[0],NewCoorda2[1],Killer[2],state)
+                        if state['people'][NewCoorda3[0]][NewCoorda3[1]] == 'king':
+                            Killermove.append(('attack',NewCoorda2[0],NewCoorda2[1],Killer[2]))
+                            return json.dumps({'actions': Killermove }, separators=(',', ':'))
                     if Killer[3] == 2:
-                        Killermove.append(('reveal',Killer[0],Killer[1]))
-                        Killermove.append(('move',Killer[0],Killer[1],Killer[2]))
-                        Killermove.append(('attack',Killer[0]+1,Killer[1]+1,Killer[2]))
-                        return json.dumps({'actions': Killermove }, separators=(',', ':'))
+                        NewCoordb = IAtest.nextposfree(Killer[0],Killer[1],Killer[2],state)
+                        if state['people'][NewCoordb[0]][NewCoordb[1]] == None:
+                            Killermove.append(('reveal',Killer[0],Killer[1]))
+                            Killermove.append(('move',Killer[0],Killer[1],Killer[2]))
+                            state['people'][Killer[0]][Killer[1]] = None
+                            state['people'][NewCoordb[0]][NewCoordb[1]]= Killer[3]
+                        NewCoordb2 = IAtest.nextposfree(NewCoordb[0],NewCoorb[1],Killer[2],state)
+                        if state['people'][NewCoordb2[0]][NewCoordb2[1]] == None:
+                            Killermove.append(('move',NewCoordb[0],NewCoordb[1],Killer[2]))
+                            state['people'][NewCoordb[0]][NewCoordb[1]] = None
+                            state['people'][NewCoordb2[0]][NewCoordb2[1]]= Killer[3]
+                        NewCoordb3 = IAtest.nextposfree(NewCoordb2[0],NewCoordb2[1],Killer[2],state)
+                        if state['people'][NewCoordb3[0]][NewCoordb3[1]] == 'king':
+                            Killermove.append(('attack',NewCoordb2[0],NewCoordb2[1],Killer[2]))
+                            return json.dumps({'actions': Killermove }, separators=(',', ':'))
                     if Killer[3] == 1:
-                        Killermove.append(('reveal',Killer[0],Killer[1]))
-                        Killermove.append(('attack',Killer[0],Killer[1],Killer[2]))
-                        return json.dumps({'actions': Killermove }, separators=(',', ':'))
+                        NewCoordc = IAtest.nextposfree(Killer[0],Killer[1],Killer[2],state)
+                        if state['people'][NewCoordc[0]][NewCoordc[1]] == None:
+                            Killermove.append(('reveal',Killer[0],Killer[1]))
+                            Killermove.append(('attack',Killer[0],Killer[1],Killer[2]))
+                            return json.dumps({'actions': Killermove }, separators=(',', ':'))
                 else: 
                     PAvillagers = state['card'][3]
                     PAknight = state['card'][1]
@@ -366,7 +390,50 @@ class KingAndAssassinsClient(game.GameClient):
                     return json.dumps({'actions': move }, separators=(',', ':'))
             #player 1 : on est le roi
             else:
-                return json.dumps({'actions': []}, separators=(',', ':'))
+                PAknight = state['card'][1]
+                #déplacement des chevaliers (aléatoire)
+                KnightsX = []
+                KnightsY = []
+                for i in range(10):
+                    for j in range(10):
+                        if state['people'][i][j] == 'knight':
+                                KnightsX.append(i)
+                                KnightsY.append(j)
+                allmove = []
+                while len(allmove) < PAknight:
+                    directions = ['N','W']
+                    NbKnights = [0,1,2,3,4,5,6]
+                    p = random.choice(NbKnights)
+                    Xknight = KnightsX[p]
+                    Yknight = KnightsY[p]
+                    direct = random.choice(directions)
+                    z = IA.nextposfree(Xknight,Yknight,direct,state)
+                    Newx = z[0]
+                    Newy = z[1]
+                    if state['people'][Newx][Newy] == None :
+                        allmove.append(('move',Xknight,Yknight,direct))
+                        state['people'][Xknight][Yknight] = None
+                        state['people'][Newx][Newy]= 'knight'
+                        if IA.OnRoof(Xknight,Yknight,Newx,Newy,state) is True:
+                            PAknight-=1
+
+                PAking = state['card'][0]
+                PAtot = PAking+PAknight
+                while len(allmove) < PAtot:
+                    directions = ['N','W']
+                    direct = random.choice(directions)
+                    coordonnees = IA.coord('king',state)
+                    z = IA.nextposfree(coordonnees[0],coordonnees[1],direct,state)
+                    Newx = z[0]
+                    Newy = z[1]
+                    if state['board'][Newx][Newy] == 'R':
+                        pass
+                    if state['people'][Newx][Newy] == None :
+                        allmove.append(('move',coordonnees[0],coordonnees[1],direct))
+                        state['people'][coordonnees[0]][coordonnees[1]] = None
+                        state['people'][Newx][Newy]= 'king'
+
+                return json.dumps({'actions': allmove }, separators=(',', ':'))
 
 if __name__ == '__main__':
     # Create the top-level parser

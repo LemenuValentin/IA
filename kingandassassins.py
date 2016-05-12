@@ -313,16 +313,12 @@ class KingAndAssassinsClient(game.GameClient):
         else:
             #player 0 : on est l'assassin
             if self._playernb == 0:
-                print(state['board'])
-                print(state['people'])
-                for y in range(10):
-                    for x in range(10):
-                        if state['people'][y][x] == 'farmer':
-                            print(y,x)
+                #if IA.CanKill(Xking,Yking,Xas,Yas,state) is True :
+
+                #else:
                 PAvillagers = state['card'][3]
                 PAknight = state['card'][1]
                 PAking = state['card'][0]
-                print(PAvillagers,PAknight,PAking)
                 Villagers = []
                 for i in range(10):
                     for j in range(10):
@@ -332,21 +328,17 @@ class KingAndAssassinsClient(game.GameClient):
                 while len(move) < PAvillagers:
                     directions = ['N','S','W','E']
                     name = random.choice(Villagers)
-                    print(name)
                     direct = random.choice(directions)
                     coordonnees = IA.coord(name,state)
                     z = IA.nextposfree(coordonnees[0],coordonnees[1],direct,state)
                     Newx = z[0]
                     Newy = z[1]
-                    print(coordonnees[1],coordonnees[0])
-                    print(Newx,Newy)
                     if state['people'][Newx][Newy] == None :
                         move.append(('move',coordonnees[0],coordonnees[1],direct))
                         state['people'][coordonnees[0]][coordonnees[1]] = None
                         state['people'][Newx][Newy]= name
                         if IA.OnRoof(coordonnees[1],coordonnees[0],Newx,Newy,state) is True:
                             PAvillagers-=1
-                    print(move)
                 return json.dumps({'actions': move }, separators=(',', ':'))
             #player 1 : on est le roi
             else:
